@@ -176,4 +176,5 @@
              #(case view-id
                 :keycard-settings (hardwallet/settings-screen-did-load %)
                 :reset-card (hardwallet/reset-card-screen-did-load %)
+                :enter-pin (hardwallet/enter-pin-screen-did-load %)
                 nil))))
