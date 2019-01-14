@@ -29,7 +29,6 @@
   (let [align (if outgoing :flex-end :flex-start)
         direction (if outgoing :row-reverse :row)]
     (merge {:flex-direction direction
-            :width          230
             :padding-top    (message-padding-top message)
             :align-self     align
             :align-items    align}
@@ -42,17 +41,20 @@
    :letter-spacing 0.1
    :align-self     :flex-end})
 
-(defn message-timestamp-text [justify-timestamp? outgoing rtl?]
+(defn message-timestamp-text [justify-timestamp? outgoing rtl? reply?]
   (merge message-timestamp
-         {:color (if outgoing colors/wild-blue-yonder colors/gray)}
+         {:color (cond
+                   (and outgoing reply?) (colors/alpha colors/white 0.7)
+                   (and outgoing (not reply?)) colors/blue
+                   :else colors/gray)}
          (when justify-timestamp? {:position              :absolute
                                    :bottom                8
                                    (if rtl? :left :right) 12})))
 
-(defn message-timestamp-placeholder-text [outgoing]
+(defn message-timestamp-placeholder-text [outgoing reply?]
   (assoc message-timestamp
          :color
-         (if outgoing colors/blue colors/white)))
+         (if outgoing colors/blue colors/blue-light)))
 
 (def message-expand-button
   {:color         colors/gray
@@ -70,8 +72,11 @@
   (merge {:flex-direction :column}
          (last-message-padding message)))
 
-(defn timestamp-content-wrapper [{:keys [outgoing]}]
-  {:flex-direction (if outgoing :row-reverse :row)})
+(defn timestamp-content-wrapper [outgoing message-type]
+  {:flex-direction (if outgoing :row-reverse :row)
+   :width          (if (= :system-message message-type)
+                     300
+                     230)})
 
 (defn group-message-view
   [outgoing message-type]
@@ -142,7 +147,7 @@
                                 16
                                 4)}
          (when-not (= content-type constants/content-type-emoji)
-           {:background-color (if outgoing colors/blue colors/white)})
+           {:background-color (if outgoing colors/blue colors/blue-light)})
          (when (= content-type constants/content-type-command)
            {:padding-top    12
             :padding-bottom 10})))
@@ -163,17 +168,23 @@
   {:position :absolute
    :width    window-width})
 
-(def message-author-name
-  {:font-size      12
-   :padding-top    6
-   :color          colors/gray})
+(defn message-author-name [chosen?]
+  {:font-size           (if chosen? 13 12)
+   :font-weight         (if chosen? "500" "400")
+   :line-height         16
+   :padding-top         6
+   :padding-left        12
+   :padding-right       16
+   :margin-right        12
+   :text-align-vertical :center
+   :color               colors/gray})
 
 (defn quoted-message-container [outgoing]
   {:margin-bottom              6
    :padding-bottom             6
    :border-bottom-color        (if outgoing
                                  colors/white-light-transparent
-                                 colors/gray-lighter)
+                                 (colors/alpha colors/black 0.1))
    :border-bottom-width        2
    :border-bottom-left-radius  2
    :border-bottom-right-radius 2})
@@ -183,18 +194,19 @@
    :align-items     :center
    :justify-content :flex-start})
 
-(defn quoted-message-author [outgoing]
-  {:font-size      12
-   :padding-bottom 5
-   :padding-top    4
-   :color          (if outgoing
-                     colors/wild-blue-yonder
-                     colors/gray)})
+(defn quoted-message-author [outgoing chosen?]
+  (assoc (message-author-name chosen?)
+         :padding-bottom  5
+         :padding-top     4
+         :padding-left    6
+         :color           (if outgoing
+                            (colors/alpha colors/white 0.7)
+                            colors/gray)))
 
 (defn quoted-message-text [outgoing]
   {:font-size 14
    :color (if outgoing
-            colors/wild-blue-yonder
+            (colors/alpha colors/white 0.7)
             colors/gray)})
 
 (def extension-container

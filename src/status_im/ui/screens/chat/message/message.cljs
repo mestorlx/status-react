@@ -47,9 +47,9 @@
           (commands/generate-preview command (commands/add-chat-contacts contacts command-message))
           [react/text (str "Unhandled command: " (-> command-message :content :command-path first))])))))
 
-(defview message-timestamp [t justify-timestamp? outgoing command? content]
+(defview message-timestamp [t justify-timestamp? outgoing command? reply? content]
   (when-not command?
-    [react/text {:style (style/message-timestamp-text justify-timestamp? outgoing (:rtl? content))} t]))
+    [react/text {:style (style/message-timestamp-text justify-timestamp? outgoing (:rtl? content) reply?)} t]))
 
 (defn message-view
   [{:keys [timestamp-str outgoing content] :as message} message-content {:keys [justify-timestamp?]}]
@@ -57,6 +57,7 @@
    message-content
    [message-timestamp timestamp-str justify-timestamp? outgoing (or (get content :command-path)
                                                                     (get content :command-ref))
+    (:response-to content)
     content]])
 
 (defn timestamp-with-padding
@@ -71,8 +72,8 @@
     [react/view {:style (style/quoted-message-container outgoing)}
      [react/view {:style style/quoted-message-author-container}
       [vector-icons/icon :icons/reply {:color (if outgoing colors/wild-blue-yonder colors/gray)}]
-      [react/text {:style (style/quoted-message-author outgoing)}
-       (chat.utils/format-reply-author from username current-public-key)]]
+      (chat.utils/format-reply-author from username current-public-key (partial style/quoted-message-author outgoing))]
+
      [react/text {:style           (style/quoted-message-text outgoing)
                   :number-of-lines 5}
       text]]))
@@ -101,7 +102,7 @@
        (if-let [render-recipe (:render-recipe content)]
          (chat.utils/render-chunks render-recipe message)
          (:text content))
-       [react/text {:style (style/message-timestamp-placeholder-text outgoing)}
+       [react/text {:style (style/message-timestamp-placeholder-text outgoing (:response-to content))}
         (timestamp-with-padding timestamp-str)]]
       (when collapsible?
         [expand-button expanded? chat-id message-id])])
@@ -241,8 +242,7 @@
 
 (defview message-author-name [from message-username]
   (letsubs [username [:contacts/contact-name-by-identity from]]
-    [react/text {:style style/message-author-name}
-     (chat.utils/format-author from (or username message-username))]))
+    (chat.utils/format-author from (or username message-username) style/message-author-name)))
 
 (defn message-body
   [{:keys [last-in-group?
@@ -264,7 +264,7 @@
     [react/view (style/group-message-view outgoing message-type)
      (when display-username?
        [message-author-name from username])
-     [react/view {:style (style/timestamp-content-wrapper message)}
+     [react/view {:style (style/timestamp-content-wrapper outgoing message-type)}
       content]]]
    [react/view (style/delivery-status outgoing)
     [message-delivery-status message]]])
