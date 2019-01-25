@@ -106,8 +106,9 @@
 
 (re-frame/reg-fx
  :shh/remove-filter
- (fn [{:keys [filter] :as params}]
-   (when filter (remove-filter! params))))
+ (fn [filters]
+   (doseq [{:keys [filter] :as params} filters]
+     (when filter (remove-filter! params)))))
 
 (re-frame/reg-fx
  :shh/remove-filters
