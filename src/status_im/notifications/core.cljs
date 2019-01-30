@@ -78,11 +78,15 @@
   (def group-id "im.status.ethereum.MESSAGE")
   (def icon "ic_stat_status_notification")
 
+  (defn- hash->contact [hash-or-pubkey accounts]
+    (let [hash (anonymize-pubkey hash-or-pubkey)]
+      (->> accounts
+           vals
+           (filter #(= (anonymize-pubkey (:public-key %)) hash))
+           first)))
+
   (defn- hash->pubkey [hash accounts]
-    (:public-key
-     (first
-      (filter #(= (anonymize-pubkey (:public-key %)) hash)
-              (vals accounts)))))
+    (:public-key (hash->contact hash accounts)))
 
   (defn lookup-contact-pubkey-from-hash
     [{:keys [db] :as cofx} contact-pubkey-or-hash]
@@ -141,6 +145,11 @@
      :to   (lookup-contact-pubkey-from-hash cofx to)
      ;; TODO: Rehydrate message id
      :id   id})
+
+  (defn- get-contact-name [{:keys [db] :as cofx} from]
+    (if (accounts.db/logged-in? cofx)
+      (:name (hash->contact from (:contacts/contacts db)))
+      (anonymize-pubkey from)))
 
   (defn- build-notification [{:keys [title body decoded-payload]}]
     (let [native-notification
@@ -224,7 +233,7 @@
          (assoc-in db [:push-notifications/stored (:to rehydrated-payload)]
                    (js/JSON.stringify (clj->js rehydrated-payload)))
          :notifications/display-notification
-         {:title           (i18n/label :notifications-new-message-title)
+         {:title           (get-contact-name cofx from)
           :body            (i18n/label :notifications-new-message-body)
           :decoded-payload rehydrated-payload}})))
 
