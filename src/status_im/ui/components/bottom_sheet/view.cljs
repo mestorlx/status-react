@@ -113,12 +113,13 @@
         {:style (styles/content-container height bottom-value)}
         [react/view styles/content-header
          [react/view styles/handle]]
-        content
+        [react/view {:style {:flex   1
+                             :height height}}
+         [content]]
         [react/view {:style styles/bottom-view}]]])}))
 
 (defn bottom-sheet
-  [{:keys [show? content-height on-cancel]} _]
-  {:pre [(fn? on-cancel) (pos? content-height)]}
+  [{:keys [show? content-height on-cancel]}]
   (let [show-sheet?          (reagent/atom show?)
         total-content-height (+ content-height styles/border-radius
                                 styles/bottom-padding)
@@ -141,6 +142,6 @@
                 (and old-show? (not new-show?) (true? @show-sheet?))
                 (cancel opts))))
       :reagent-render
-      (fn [_ content]
+      (fn [{:keys [content]}]
         (when @show-sheet?
           [bottom-sheet-view (assoc opts :content content)]))})))

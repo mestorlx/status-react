@@ -895,5 +895,14 @@
     "sticker-market": "Sticker market",
     "you-dont-have-stickers": "You don’t have any stickers yet",
     "get-stickers": "Get Stickers",
-    "recently-used-stickers": "Recently used stickers will appear here"
+    "recently-used-stickers": "Recently used stickers will appear here",
+    "mobile-syncing-sheet-title": "Sync using the mobile network",
+    "mobile-syncing-sheet-details": "Status tends to use a lot of data when syncing chats. You can choose not to sync when on mobile network",
+    "mobile-network-continue-syncing": "Continue syncing",
+    "mobile-network-continue-syncing-details": "You can change this later in settings",
+    "mobile-network-stop-syncing": "Stop syncing",
+    "mobile-network-stop-syncing-details": "Until connected to wi-fi?",
+    "mobile-network-sheet-configure": "You can configure syncing in more \ndetail in",
+    "mobile-network-sheet-settings": "settings",
+    "mobile-network-sheet-remember-choice": "Remember my choice"
 }
