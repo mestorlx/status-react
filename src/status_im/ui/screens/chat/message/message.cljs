@@ -47,9 +47,9 @@
           (commands/generate-preview command (commands/add-chat-contacts contacts command-message))
           [react/text (str "Unhandled command: " (-> command-message :content :command-path first))])))))
 
-(defview message-timestamp [t justify-timestamp? outgoing command? reply? content]
+(defview message-timestamp [t justify-timestamp? outgoing command? content]
   (when-not command?
-    [react/text {:style (style/message-timestamp-text justify-timestamp? outgoing (:rtl? content) reply?)} t]))
+    [react/text {:style (style/message-timestamp-text justify-timestamp? outgoing (:rtl? content))} t]))
 
 (defn message-view
   [{:keys [timestamp-str outgoing content] :as message} message-content {:keys [justify-timestamp?]}]
@@ -57,7 +57,6 @@
    message-content
    [message-timestamp timestamp-str justify-timestamp? outgoing (or (get content :command-path)
                                                                     (get content :command-ref))
-    (:response-to content)
     content]])
 
 (defn timestamp-with-padding
@@ -102,7 +101,7 @@
        (if-let [render-recipe (:render-recipe content)]
          (chat.utils/render-chunks render-recipe message)
          (:text content))
-       [react/text {:style (style/message-timestamp-placeholder-text outgoing (:response-to content))}
+       [react/text {:style (style/message-timestamp-placeholder-text outgoing)}
         (timestamp-with-padding timestamp-str)]]
       (when collapsible?
         [expand-button expanded? chat-id message-id])])

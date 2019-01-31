@@ -41,17 +41,16 @@
    :letter-spacing 0.1
    :align-self     :flex-end})
 
-(defn message-timestamp-text [justify-timestamp? outgoing rtl? reply?]
+(defn message-timestamp-text [justify-timestamp? outgoing rtl?]
   (merge message-timestamp
-         {:color (cond
-                   (and outgoing reply?) (colors/alpha colors/white 0.7)
-                   (and outgoing (not reply?)) colors/blue
-                   :else colors/gray)}
+         {:color (if outgoing 
+                   (colors/alpha colors/white 0.7)
+                   colors/gray)}
          (when justify-timestamp? {:position              :absolute
                                    :bottom                8
                                    (if rtl? :left :right) 12})))
 
-(defn message-timestamp-placeholder-text [outgoing reply?]
+(defn message-timestamp-placeholder-text [outgoing]
   (assoc message-timestamp
          :color
          (if outgoing colors/blue colors/blue-light)))
