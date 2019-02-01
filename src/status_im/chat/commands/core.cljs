@@ -36,8 +36,7 @@
   (keyword (str (protocol/id type) "-button")))
 
 (defn- contact->address [all-contacts pub-key]
-  (let [address (get-in all-contacts [pub-key :address])]
-    (str "0x" (:address address))))
+  (get-in all-contacts [pub-key :address]))
 
 (defn add-chat-contacts
   "Enrich command-message by adding contact list of the current private or group chat"
