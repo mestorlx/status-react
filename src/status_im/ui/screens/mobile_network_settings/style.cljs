@@ -1,5 +1,4 @@
 (ns status-im.ui.screens.mobile-network-settings.style
-  (:require-macros [status-im.utils.styles :as styles])
   (:require [status-im.ui.components.colors :as colors]
             [status-im.ui.components.styles :as common-styles]))
 
@@ -31,53 +30,15 @@
     :text-align  :center
     :line-height 22}))
 
-(def option-item
-  {:height         64
-   :align-self     :stretch
-   :flex-direction :row})
-
-(def icon-container
-  {:width           72
-   :justify-content :center
-   :align-items     :center})
-
-(defn icon [color background-color size]
-  {:width           size
-   :height          size
-   :color           color
-   :container-style {:width            40
-                     :height           40
-                     :border-radius    20
-                     :background-color background-color
-                     :justify-content  :center
-                     :align-items      :center}})
-
 (def network-icon
-  (icon colors/blue colors/blue-light 30))
+  {:title-color     :blue
+   :icon-color      :blue
+   :icon-background :blue-light})
 
 (def cancel-icon
-  (icon colors/red colors/red-light 25))
-
-(def item
-  {:flex           1
-   :padding-top    8
-   :padding-bottom 8})
-
-(def item-text
-  {:height          18
-   :justify-content :center
-   :margin-top      3
-   :margin-bottom   3})
-
-(defn item-title [color]
-  (merge common-styles/text-main-medium
-         {:color (case color
-                   :blue colors/blue
-                   :red colors/red)}))
-
-(def item-details
-  (merge common-styles/text-main
-         {:color colors/gray}))
+  {:title-color     :red
+   :icon-color      :red
+   :icon-background :red-light})
 
 (def separator
   {:background-color colors/gray-lighter
