@@ -24,10 +24,7 @@
  :contacts/active
  :<- [:contacts/contacts]
  (fn [contacts]
-   (->> contacts
-        (remove (fn [[_ {:keys [pending? hide-contact? blocked?]}]]
-                  (or pending? hide-contact? blocked?)))
-        (contact.db/sort-contacts))))
+   (contact.db/active contacts)))
 
 (re-frame/reg-sub
  :contacts/active-count
