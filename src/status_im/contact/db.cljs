@@ -100,6 +100,13 @@
                      (clojure.string/lower-case name2))))
         (vals contacts)))
 
+(defn active
+  [contacts]
+  (->> contacts
+       (remove (fn [[_ {:keys [pending? hide-contact? blocked?]}]]
+                 (or pending? hide-contact? blocked?)))
+       sort-contacts))
+
 (defn filter-dapps
   [v dev-mode?]
   (remove #(when-not dev-mode? (true? (:developer? %))) v))
@@ -131,3 +138,7 @@
 (defn get-blocked-contacts
   [contacts]
   (into #{} (map :public-key (filter :blocked? contacts))))
+
+(defn blocked?
+  [db contact]
+  (get-in db [:contacts/contacts contact :blocked?]))

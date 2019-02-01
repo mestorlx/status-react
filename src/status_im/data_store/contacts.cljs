@@ -37,7 +37,7 @@
 
 (defn- get-messages-by-messages-ids
   [message-ids]
-  (when-not (empty message-ids)
+  (when (not-empty message-ids)
     (-> @core/account-realm
         (.objects "message")
         (.filtered (str "(" (core/in-query "message-id" message-ids) ")")))))
